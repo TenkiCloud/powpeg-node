@@ -1,19 +1,21 @@
 name: Rootstock Integration Tests
 
-on:
-  pull_request:
-    types: [ opened, synchronize, reopened ]
-    branches: [ "master", "*-rc" ]
-  workflow_dispatch:
-    inputs:
-      rit-branch:
-        description: 'Branch for Rootstock Integration Tests'
-        required: false
-        default: 'main'
-      rskj-branch:
-        description: 'Branch for RSKJ repo'
-        required: false
-        default: 'master'
+on: pull_request
+
+# on:
+#   pull_request:
+#     types: [ opened, synchronize, reopened ]
+#     branches: [ "master", "*-rc" ]
+#   workflow_dispatch:
+#     inputs:
+#       rit-branch:
+#         description: 'Branch for Rootstock Integration Tests'
+#         required: false
+#         default: 'main'
+#       rskj-branch:
+#         description: 'Branch for RSKJ repo'
+#         required: false
+#         default: 'master'
 
 # Declare default permissions as read only.
 permissions: read-all
@@ -131,58 +133,58 @@ jobs:
           rit-branch: ${{ env.RIT_BRANCH }}
           repo-owner: ${{ env.REPO_OWNER }}
 
-      - name: Send Slack Notification on Success
-        if: success() && github.event.pull_request.head.repo.owner.login == 'rsksmart'
-        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
-        with:
-          token: ${{ secrets.GHA_SLACK_NOTIFICATION_TOKEN }}
-          method: chat.postMessage
-          payload: |
-            {
-              "channel": "${{ vars.GHA_SLACK_NOTIFICATION_CHANNEL }}",
-              "blocks": [
-                { "type": "header", "text": { "type": "plain_text", "text": "✅ PASSED — ${{ github.repository }} – PR #${{ github.event.pull_request.number }}", "emoji": true } },
-                {
-                  "type": "section",
-                  "text": { "type": "mrkdwn", "text": "*${{ env.SAFE_PULL_REQUEST_TITLE }}*" },
-                  "fields": [
-                    { "type": "mrkdwn", "text": "• rskj: `${{ env.RSKJ_BRANCH }}`\n• fed: `${{ env.POWPEG_BRANCH }}`\n• rit: `${{ env.RIT_BRANCH }}`" }
-                  ]
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    { "type": "button", "text": { "type": "plain_text", "text": "Open PR" }, "url": "${{ github.event.pull_request.html_url }}" },
-                    { "type": "button", "text": { "type": "plain_text", "text": "View Actions Run" }, "url": "${{ env.BUILD_URL }}" }
-                  ]
-                }
-              ]
-            }
+      # - name: Send Slack Notification on Success
+      #   if: success() && github.event.pull_request.head.repo.owner.login == 'rsksmart'
+      #   uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
+      #   with:
+      #     token: ${{ secrets.GHA_SLACK_NOTIFICATION_TOKEN }}
+      #     method: chat.postMessage
+      #     payload: |
+      #       {
+      #         "channel": "${{ vars.GHA_SLACK_NOTIFICATION_CHANNEL }}",
+      #         "blocks": [
+      #           { "type": "header", "text": { "type": "plain_text", "text": "✅ PASSED — ${{ github.repository }} – PR #${{ github.event.pull_request.number }}", "emoji": true } },
+      #           {
+      #             "type": "section",
+      #             "text": { "type": "mrkdwn", "text": "*${{ env.SAFE_PULL_REQUEST_TITLE }}*" },
+      #             "fields": [
+      #               { "type": "mrkdwn", "text": "• rskj: `${{ env.RSKJ_BRANCH }}`\n• fed: `${{ env.POWPEG_BRANCH }}`\n• rit: `${{ env.RIT_BRANCH }}`" }
+      #             ]
+      #           },
+      #           {
+      #             "type": "actions",
+      #             "elements": [
+      #               { "type": "button", "text": { "type": "plain_text", "text": "Open PR" }, "url": "${{ github.event.pull_request.html_url }}" },
+      #               { "type": "button", "text": { "type": "plain_text", "text": "View Actions Run" }, "url": "${{ env.BUILD_URL }}" }
+      #             ]
+      #           }
+      #         ]
+      #       }
 
-      - name: Send Slack Notification on Failure
-        if: failure() && github.event.pull_request.head.repo.owner.login == 'rsksmart'
-        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
-        with:
-          token: ${{ secrets.GHA_SLACK_NOTIFICATION_TOKEN }}
-          method: chat.postMessage
-          payload: |
-            {
-              "channel": "${{ vars.GHA_SLACK_NOTIFICATION_CHANNEL }}",
-              "blocks": [
-                { "type": "header", "text": { "type": "plain_text", "text": "❌ FAILED — ${{ github.repository }} – PR #${{ github.event.pull_request.number }}", "emoji": true } },
-                {
-                  "type": "section",
-                  "text": { "type": "mrkdwn", "text": "*${{ env.SAFE_PULL_REQUEST_TITLE }}*" },
-                  "fields": [
-                    { "type": "mrkdwn", "text": "• rskj: `${{ env.RSKJ_BRANCH }}`\n• fed: `${{ env.POWPEG_BRANCH }}`\n• rit: `${{ env.RIT_BRANCH }}`" }
-                  ]
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    { "type": "button", "style": "danger", "text": { "type": "plain_text", "text": "Open PR" }, "url": "${{ github.event.pull_request.html_url }}" },
-                    { "type": "button", "style": "danger", "text": { "type": "plain_text", "text": "View Actions Run" }, "url": "${{ env.BUILD_URL }}" }
-                  ]
-                }
-              ]
-            }
+      # - name: Send Slack Notification on Failure
+      #   if: failure() && github.event.pull_request.head.repo.owner.login == 'rsksmart'
+      #   uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
+      #   with:
+      #     token: ${{ secrets.GHA_SLACK_NOTIFICATION_TOKEN }}
+      #     method: chat.postMessage
+      #     payload: |
+      #       {
+      #         "channel": "${{ vars.GHA_SLACK_NOTIFICATION_CHANNEL }}",
+      #         "blocks": [
+      #           { "type": "header", "text": { "type": "plain_text", "text": "❌ FAILED — ${{ github.repository }} – PR #${{ github.event.pull_request.number }}", "emoji": true } },
+      #           {
+      #             "type": "section",
+      #             "text": { "type": "mrkdwn", "text": "*${{ env.SAFE_PULL_REQUEST_TITLE }}*" },
+      #             "fields": [
+      #               { "type": "mrkdwn", "text": "• rskj: `${{ env.RSKJ_BRANCH }}`\n• fed: `${{ env.POWPEG_BRANCH }}`\n• rit: `${{ env.RIT_BRANCH }}`" }
+      #             ]
+      #           },
+      #           {
+      #             "type": "actions",
+      #             "elements": [
+      #               { "type": "button", "style": "danger", "text": { "type": "plain_text", "text": "Open PR" }, "url": "${{ github.event.pull_request.html_url }}" },
+      #               { "type": "button", "style": "danger", "text": { "type": "plain_text", "text": "View Actions Run" }, "url": "${{ env.BUILD_URL }}" }
+      #             ]
+      #           }
+      #         ]
+      #       }
